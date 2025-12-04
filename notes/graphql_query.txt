@@ -1,0 +1,20 @@
+query problemsetQuestionList(
+  $categorySlug: String
+  $skip: Int
+  $limit: Int
+  $filters: QuestionListFilterInput
+) {
+  problemsetQuestionList(
+    categorySlug: $categorySlug
+    skip: $skip
+    limit: $limit
+    filters: $filters
+  ) {
+    questions {
+      title
+      titleSlug
+      difficulty
+      paidOnly
+    }
+  }
+}
