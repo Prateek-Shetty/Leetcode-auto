@@ -2,39 +2,37 @@ name: Daily LeetCode Automation
 
 on:
   schedule:
-    # Runs daily at 7:00 AM IST (01:30 UTC)
     - cron: "30 1 * * *"
-  workflow_dispatch:  # allows manual run
+  workflow_dispatch:
 
 jobs:
   run-daily-task:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.10"
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
 
-    - name: Clear pip cache
-      run: pip cache purge || true
+      - name: Clear pip cache
+        run: pip cache purge || true
 
-    - name: Install dependencies (fresh)
-      run: pip install --no-cache-dir -r requirements.txt
+      - name: Install dependencies (fresh)
+        run: pip install --no-cache-dir -r requirements.txt
 
-    - name: Run daily script
-      env:
-        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        SMTP_USER: ${{ secrets.SMTP_USER }}
-        SMTP_APP_PASSWORD: ${{ secrets.SMTP_APP_PASSWORD }}
-        EMAIL_TO: ${{ secrets.EMAIL_TO }}
-        EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
-        DELIVERY: ${{ secrets.DELIVERY }}
-        MONGODB_URI: ${{ secrets.MONGODB_URI }}
-        HISTORY_ARTIFACT_NAME: ${{ secrets.HISTORY_ARTIFACT_NAME }}
-      run: |
-        python scripts/daily_runner.py
+      - name: Run daily script
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_APP_PASSWORD: ${{ secrets.SMTP_APP_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          DELIVERY: ${{ secrets.DELIVERY }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          HISTORY_ARTIFACT_NAME: ${{ secrets.HISTORY_ARTIFACT_NAME }}
+        run: python scripts/daily_runner.py
