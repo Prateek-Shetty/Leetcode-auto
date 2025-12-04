@@ -2,13 +2,11 @@ query problemsetQuestionList(
   $categorySlug: String
   $skip: Int
   $limit: Int
-  $filters: QuestionListFilterInput
 ) {
-  problemsetQuestionList(
+  problemsetQuestionListV2(
     categorySlug: $categorySlug
     skip: $skip
     limit: $limit
-    filters: $filters
   ) {
     questions {
       title

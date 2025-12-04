@@ -1,7 +1,9 @@
-
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from dotenv import load_dotenv
+load_dotenv()
 
 from scripts.fetch_problems import fetch_problems_from_leetcode
 from scripts.choose_problem import choose_today_problem
@@ -13,9 +15,7 @@ from scripts.db import save_to_history
 def main():
     print("\n===== LeetCode Daily Automation Started =====\n")
 
-    # -------------------------------
-    # Step 1: Fetch problems from LeetCode
-    # -------------------------------
+    # STEP 1 — FETCH ALL PROBLEMS
     print("Fetching problems from LeetCode...")
     problems = fetch_problems_from_leetcode()
 
@@ -25,9 +25,7 @@ def main():
 
     print(f"Fetched {len(problems)} problems successfully.\n")
 
-    # -------------------------------
-    # Step 2: Select today's problem
-    # -------------------------------
+    # STEP 2 — CHOOSE TODAY'S PROBLEM
     print("Selecting today's problem...")
     today_problem = choose_today_problem()
 
@@ -39,33 +37,25 @@ def main():
     title = today_problem["title"]
     difficulty = today_problem["difficulty"]
 
-    print(f"Selected problem: {title} ({difficulty})")
+    print(f"Selected: {title} ({difficulty})")
     print(f"Slug: {slug}\n")
 
-    # -------------------------------
-    # Step 3: Save today's problem to history
-    # -------------------------------
+    # STEP 3 — SAVE HISTORY
     save_to_history(slug, title, difficulty)
     print("Saved to 100-day history.\n")
 
-    # -------------------------------
-    # Step 4: Determine delivery mode
-    # -------------------------------
+    # STEP 4 — DELIVERY MODE
     DELIVERY = os.getenv("DELIVERY", "both").lower()
     print(f"Delivery mode: {DELIVERY}\n")
 
-    # -------------------------------
-    # Step 5: Send Telegram
-    # -------------------------------
+    # STEP 5 — TELEGRAM
     if DELIVERY in ["both", "telegram"]:
-        print("Sending message to Telegram...")
+        print("Sending Telegram message...")
         send_telegram_message(title, slug)
 
-    # -------------------------------
-    # Step 6: Send Email
-    # -------------------------------
+    # STEP 6 — EMAIL
     if DELIVERY in ["both", "email"]:
-        print("Sending message to Email...")
+        print("Sending Email message...")
         send_email_message(title, slug)
 
     print("\n===== Daily Automation Completed Successfully =====\n")

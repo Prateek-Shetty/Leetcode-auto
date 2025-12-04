@@ -1,11 +1,8 @@
 import os
 import requests
 from scripts.db import save_problems_cache
-import json
 
-# Load GraphQL query from notes/graphql_query.txt
 GRAPHQL_QUERY_PATH = "notes/graphql_query.txt"
-
 LEETCODE_ENDPOINT = "https://leetcode.com/graphql"
 
 HEADERS = {
@@ -17,7 +14,7 @@ HEADERS = {
 
 def load_graphql_query():
     """
-    Load the GraphQL query string from file.
+    Load GraphQL query text from file.
     """
     with open(GRAPHQL_QUERY_PATH, "r") as f:
         return f.read().strip()
@@ -25,9 +22,10 @@ def load_graphql_query():
 
 def fetch_problems_from_leetcode():
     """
-    Fetch all problems from LeetCode GraphQL.
-    Returns cleaned list of problems or None if request fails.
+    Fetch LeetCode problems using problemsetQuestionListV2.
+    Returns cleaned list or None on failure.
     """
+
     query = load_graphql_query()
 
     payload = {
@@ -35,7 +33,7 @@ def fetch_problems_from_leetcode():
         "variables": {
             "categorySlug": "",
             "skip": 0,
-            "limit": 3000,          # fetch everything
+            "limit": 3000,     # fetch everything
             "filters": {}
         }
     }
@@ -49,16 +47,22 @@ def fetch_problems_from_leetcode():
         )
 
         if response.status_code != 200:
-            print("GraphQL error:", response.text)
+            print("HTTP Error:", response.status_code, response.text)
             return None
 
         data = response.json()
 
-        # Path depends on your query structure
-        # Most problem lists come as problemsetQuestionList.questions
-        questions = data.get("data", {}) \
-                        .get("problemsetQuestionList", {}) \
-                        .get("questions", [])
+        # Correct structure:
+        block = (
+            data.get("data", {})
+            .get("problemsetQuestionListV2")
+        )
+
+        if not block:
+            print("Invalid response structure:", data)
+            return None
+
+        questions = block.get("questions", [])
 
         cleaned = []
         for q in questions:
@@ -69,14 +73,13 @@ def fetch_problems_from_leetcode():
                 "paidOnly": q.get("paidOnly", False)
             })
 
-        # Remove paid problems
-        cleaned = [p for p in cleaned if p["paidOnly"] is False]
+        # REMOVE PAID PROBLEMS
+        cleaned = [p for p in cleaned if not p["paidOnly"]]
 
-        # Save to MongoDB
         save_problems_cache(cleaned)
 
         return cleaned
 
     except Exception as e:
-        print("Failed to fetch from GraphQL:", e)
+        print("Fetch failed:", e)
         return None
