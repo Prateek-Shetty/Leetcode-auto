@@ -1,4 +1,8 @@
+
+import sys
 import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from scripts.fetch_problems import fetch_problems_from_leetcode
 from scripts.choose_problem import choose_today_problem
 from scripts.send_telegram import send_telegram_message
