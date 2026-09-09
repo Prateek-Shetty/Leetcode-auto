@@ -13,6 +13,10 @@ query problemsetQuestionList(
       titleSlug
       difficulty
       paidOnly
+      topicTags {
+        name
+        slug
+      }
     }
   }
 }
