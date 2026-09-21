@@ -2,7 +2,7 @@ name: Daily LeetCode Automation
 
 on:
   schedule:
-    - cron: "30 0 * * *"
+    - cron: "30 18 * * *"
   workflow_dispatch:
 
 jobs:
